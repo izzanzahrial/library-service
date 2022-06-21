@@ -6,33 +6,35 @@ import (
 	"github.com/izzanzahrial/library-service/entity"
 )
 
-var id int
+var bookID int
 
 type library struct {
-	books map[string]*entity.Book
+	books map[string]*entity.BookQty
 }
 
 func (l *library) RegisterBook(title, author string, qty int) error {
-	id += 1
+	bookID += 1
 
-	l.books[title] = &entity.Book{
-		ID:     id,
-		Title:  title,
-		Author: author,
-		Qty:    qty,
+	l.books[title] = &entity.BookQty{
+		Book: entity.Book{
+			ID:     bookID,
+			Title:  title,
+			Author: author,
+		},
+		Qty: qty,
 	}
 
 	return nil
 }
 
-func (l *library) GetBook(title string) (*entity.Book, error) {
+func (l *library) GetBook(title string) (*entity.BookQty, error) {
 	book, ok := l.books[title]
 	if !ok {
-		return &entity.Book{}, errors.New("cannot find the book")
+		return &entity.BookQty{}, errors.New("cannot find the book")
 	}
 
 	if book.Qty <= 0 {
-		return &entity.Book{}, errors.New("cannot borrow the book because the stock is empty")
+		return &entity.BookQty{}, errors.New("cannot borrow the book because the stock is empty")
 	}
 
 	book.Qty -= 1

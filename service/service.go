@@ -3,38 +3,38 @@ package service
 import "github.com/izzanzahrial/library-service/entity"
 
 type User interface {
-	RegisterUser(name, role string) error
-	GetUser(name string) (*entity.User, error)
+	RegisterUser(name string) error
+	GetUser(userID int) (*entity.User, error)
 }
 
-func NewUser(userPool map[string]*entity.User) User {
+func NewUser(users map[int]*entity.User) User {
 	return &user{
-		users: userPool,
+		users: users,
 	}
 }
 
 type Library interface {
 	RegisterBook(title, author string, qty int) error
 	ChangeBookQty(title string, qty int) error
-	GetBook(title string) (*entity.Book, error)
+	GetBook(title string) (*entity.BookQty, error)
 	ReturnBook(title string) error
 }
 
-func NewLibrary(bookPool map[string]*entity.Book) Library {
+func NewLibrary(books map[string]*entity.BookQty) Library {
 	return &library{
-		books: bookPool,
+		books: books,
 	}
 }
 
 type Borrowing interface {
-	BorrowBooks(title []string, user *entity.User) error
-	ReturnBooks(books []*entity.Book, user *entity.User) error
+	BorrowBooks(titles []string, userID int) error
+	ReturnBooks(titles []string, userID int) error
 }
 
-func NewBorrowing(user User, library Library, borrowPool map[int]*entity.Borrow) Borrowing {
+func NewBorrowing(user User, library Library, borrowCache map[int]*entity.Borrow) Borrowing {
 	return &borrowing{
 		user:      user,
 		library:   library,
-		borrowing: borrowPool,
+		borrowing: borrowCache,
 	}
 }

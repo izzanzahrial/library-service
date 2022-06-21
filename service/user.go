@@ -9,13 +9,13 @@ import (
 var userID int
 
 type user struct {
-	users map[string]*entity.User
+	users map[int]*entity.User
 }
 
-func (u *user) RegisterUser(name, role string) error {
+func (u *user) RegisterUser(name string) error {
 	userID += 1
 
-	u.users[name] = &entity.User{
+	u.users[userID] = &entity.User{
 		ID:   userID,
 		Name: name,
 	}
@@ -23,8 +23,8 @@ func (u *user) RegisterUser(name, role string) error {
 	return nil
 }
 
-func (u *user) GetUser(name string) (*entity.User, error) {
-	user, ok := u.users[name]
+func (u *user) GetUser(userID int) (*entity.User, error) {
+	user, ok := u.users[userID]
 	if !ok {
 		return &entity.User{}, errors.New("cannot find user")
 	}

@@ -12,36 +12,41 @@ type borrowing struct {
 	borrowing map[int]*entity.Borrow
 }
 
-func (b *borrowing) BorrowBooks(titles []string, user *entity.User) error {
-	borrowKey := userID
-
-	b.borrowing[borrowKey] = &entity.Borrow{
-		User: *user,
+func (b *borrowing) BorrowBooks(titles []string, userID int) error {
+	registeredUser, err := b.user.GetUser(userID)
+	if err != nil {
+		return err
 	}
 
+	var books []entity.Book
+
 	for _, title := range titles {
-		book, _ := b.library.GetBook(title)
-		b.borrowing[borrowKey] = &entity.Borrow{
-			Books: *book,
-		}
+		bookQty, _ := b.library.GetBook(title)
+		books = append(books, bookQty.Book)
+	}
+
+	b.borrowing[registeredUser.ID] = &entity.Borrow{
+		User:  *registeredUser,
+		Books: books,
 	}
 
 	return nil
 }
 
-func (b *borrowing) ReturnBooks(books []*entity.Book, user *entity.User) error {
-	if _, ok := b.borrowing[user.ID]; !ok {
-		return fmt.Errorf("user with the name %s havent borrow a book", user.Name)
+func (b *borrowing) ReturnBooks(titles []string, userID int) error {
+	registeredUser, err := b.user.GetUser(userID)
+	if err != nil {
+		return err
 	}
 
-	for _, book := range books {
-		err := b.library.ReturnBook(book.Title)
+	for _, title := range titles {
+		err := b.library.ReturnBook(title)
 		if err != nil {
-			return err
+			fmt.Println(err)
 		}
 	}
 
-	delete(b.borrowing, user.ID)
+	delete(b.borrowing, registeredUser.ID)
 
 	return nil
 }
