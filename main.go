@@ -139,6 +139,4 @@ func scan(arg interface{}) {
 	if err != nil && err.Error() != "unexpected newline" {
 		panic(err)
 	}
-
-	return
 }
